@@ -1,4 +1,4 @@
-# ReportHelpe
+# ReportHelper
     Trên 1 CSDL bất kỳ, thiết kế trang Web (ASP.NET) hỗ trợ tạo 1 báo cáo động theo nhu cầu người dùng (Dùng XtraReport 16.1). 
     User có thể:
       -	Chọn field tham gia vào báo cáo
