@@ -1,0 +1,157 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+</head>
+<body>
+
+
+    @*@using (Html.BeginForm("Index", "Home", FormMethod.Post))
+        {
+            <input type="hidden" name="selectedItems" id="selectedItems" />
+
+        }*@
+    <style>
+        #Dropbox {
+            width: 90%;
+            height: 22px;
+        }
+    </style>
+    <link href="~/Content/myStyle.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css" />
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/jstree.min.js"></script>
+    <script type="text/javascript">
+        const set = new Set()
+        $(function () {
+            $('#jstree').on('changed.jstree', function (e, data) {
+                var i, j;
+                var query = "select "
+                var from = "\nfrom "
+                var select = []
+                var selectedItems = []
+                for(i = 0, j = data.selected.length; i < j; i++) {
+
+                    //Fetch the Id.
+                    var id = data.selected[i];
+                    //Remove the ParentId.
+                    if(id.indexOf('-') != -1){
+                        id = id.split("-")[0];
+                    }
+
+                    //Add the Node to the JSON Array.
+                    selectedItems.push({
+                        text: data.instance.get_node(data.selected[i]).text,
+                        id: id,
+                        parent: data.node.parents[0]
+                    });
+
+                    if (!data.instance.is_parent(data.selected[i]))
+                        select.push(data.instance.get_node(data.selected[i]).text)
+                }
+                //push
+                if(data.instance.is_parent(data.node))
+                {
+                    set.add(data.instance.get_node(data.node).text)
+                } else {
+                    set.add(data.instance.get_node(data.node.parent).text)
+                }
+                console.log(data)
+                //delete
+                if (data.instance.is_parent(data.node) && !data.instance.is_checked(data.node)){
+                    set.delete(data.instance.get_node(data.node).text)
+                }
+
+                //if (data.instance.is_leaf(data.node) && !data.instance.is_checked(data.node.parent))
+                //{
+                //    console.log(data.instance.get_checked(data.node, false))
+                //}
+
+                console.log(set)
+
+                from += Array.from(set).join(", ")
+                $("#queryShow").val(JSON.stringify(from))
+                query += select.join(", ")
+                document.getElementById("selectQuery").value = query + from
+
+                //$('#jstree').on('activate_node.jstree', function(e, data) {
+                //    if(data.instance.is_leaf(data.node) && data.instance.is_checked(data.node)) {
+                //        set.add(data.instance.get_node(data.node.parent).text)
+                //    } else if (!data.instance.is_checked(data.node)){
+                //        set.delete(data.instance.get_node(data.node.parent).text)
+                //    }
+                //    from += Array.from(set).join(', ')
+                //    $("#queryShow").val(JSON.stringify(from))
+                //});
+                //console.log(data.node)
+                //var currentNode = $("#jstree").jstree("get_selected");
+                //var childrens = $("#jstree").jstree("get_children_dom",currentNode);
+
+                //for(var i=0;i<childrens.length;i++)
+                //{
+                //    //alert(childrens[i].innerText);
+                //    set.add(childrens[i].innerText)
+                //}
+
+                //Serialize the JSON Array and save in HiddenField.
+                $('#selectedItems').val(JSON.stringify(selectedItems));
+            }).jstree({
+                "core": {
+                    "themes": {
+                        "variant": "large"
+                    },
+                    "data": @Html.Raw(ViewBag.Json),
+                },
+                "checkbox": {
+                    "keep_selected_style": false
+                },
+                "plugins": ["wholerow", "checkbox"],
+            });
+        })
+    </script>
+
+    <div class="container">
+        <div class="navbar">
+            <div id="jstree">
+            </div>
+            <div class="content">
+
+                <div>
+                    <textarea class="text" id="selectQuery" rows="20" cols="100"> </textarea>
+                    @*<button class="btn" style="position: relative; bottom: 8px; height: 25px;">Execute Query</button>*@
+                    <input type="button" style="position: relative; bottom: 8px; height: 25px;" value="Execute Query" onclick="location.href='@Url.Action("Report", "Home")'" />
+                </div>
+                <table class="table1" style="width: 100%;">
+                    <tr style="background-color:gray;">
+                        <th style="width: 20%;">Field</th>
+                        <th style="width: 20%;">Table</th>
+                        <th style="width: 15%;">Funtion</th>
+                        <th style="width: 15%;">Sort</th>
+                        <th style="width: 20%;">Criteria</th>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td>
+                            @Html.DropDownList("Dropbox", (IEnumerable
+                            <SelectListItem>)ViewBag.Funtion)
+                        </td>
+                        <td>
+                            @Html.DropDownList("Dropbox", (IEnumerable
+                            <SelectListItem>)ViewBag.Sort)
+                        </td>
+                        <td>
+                            <input style="height: 19px; padding: 0;">
+                        </td>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

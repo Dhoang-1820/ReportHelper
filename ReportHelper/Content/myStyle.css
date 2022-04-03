@@ -1,0 +1,27 @@
+﻿
+.jstree-1  {
+    width: 270px;
+    height: 100%;
+}
+
+
+.navbar {
+    display: flex;
+}
+
+.text {
+    height: 310px;
+}
+
+.table1, th, td {
+    border-collapse: collapse;   
+    border: 1px solid black;
+    line-height: 25px; 
+    padding: 5px;
+    text-align: center; 
+}
+
+
+
+
+
