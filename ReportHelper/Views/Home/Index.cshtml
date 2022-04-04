@@ -1,7 +1,7 @@
 ﻿@{
     ViewBag.Title = "Home Page";
 }
-
+@model ReportHelper.Models.strQuery
 <!DOCTYPE html>
 <html>
 <head>
@@ -11,16 +11,16 @@
 <body>
 
 
-    @*@using (Html.BeginForm("Index", "Home", FormMethod.Post))
-        {
-            <input type="hidden" name="selectedItems" id="selectedItems" />
+    @using (Html.BeginForm("Index", "Home", FormMethod.Post))
+    {
+        <input type="text"  name="selectedItems" id="selectedItems" style="width: 100%;" />
 
-        }*@
     <style>
         #Dropbox {
             width: 90%;
             height: 22px;
         }
+       
     </style>
     <link href="~/Content/myStyle.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css" />
@@ -28,6 +28,7 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/jstree.min.js"></script>
     <script type="text/javascript">
         const set = new Set()
+        const parentFrom = new Set();
         $(function () {
             $('#jstree').on('changed.jstree', function (e, data) {
                 var i, j;
@@ -41,7 +42,7 @@
                     var id = data.selected[i];
                     //Remove the ParentId.
                     if(id.indexOf('-') != -1){
-                        id = id.split("-")[0];
+                        id = id.split("-")[1];
                     }
 
                     //Add the Node to the JSON Array.
@@ -61,23 +62,13 @@
                 } else {
                     set.add(data.instance.get_node(data.node.parent).text)
                 }
-                console.log(data)
+                //console.log(data)
                 //delete
                 if (data.instance.is_parent(data.node) && !data.instance.is_checked(data.node)){
                     set.delete(data.instance.get_node(data.node).text)
                 }
 
-                //if (data.instance.is_leaf(data.node) && !data.instance.is_checked(data.node.parent))
-                //{
-                //    console.log(data.instance.get_checked(data.node, false))
-                //}
-
-                console.log(set)
-
-                from += Array.from(set).join(", ")
-                $("#queryShow").val(JSON.stringify(from))
-                query += select.join(", ")
-                document.getElementById("selectQuery").value = query + from
+                //console.log(set)
 
                 //$('#jstree').on('activate_node.jstree', function(e, data) {
                 //    if(data.instance.is_leaf(data.node) && data.instance.is_checked(data.node)) {
@@ -98,8 +89,25 @@
                 //    set.add(childrens[i].innerText)
                 //}
 
+                var arrFrom = []
+
+               // console.log(selectedItems)
+                for (i in selectedItems)
+                {
+                    if (selectedItems[i].id > 10000){
+                        arrFrom.push(selectedItems[i].text)
+                    }
+                }
+                //console.log(arrFrom)
+
+                from += Array.from(set).join(", ")
+                query += select.join(", ")
+                document.getElementById("selectQuery").value = query + from
+
+
                 //Serialize the JSON Array and save in HiddenField.
                 $('#selectedItems').val(JSON.stringify(selectedItems));
+                $('#')
             }).jstree({
                 "core": {
                     "themes": {
@@ -112,7 +120,7 @@
                 },
                 "plugins": ["wholerow", "checkbox"],
             });
-        })
+        })       
     </script>
 
     <div class="container">
@@ -120,11 +128,13 @@
             <div id="jstree">
             </div>
             <div class="content">
-
                 <div>
-                    <textarea class="text" id="selectQuery" rows="20" cols="100"> </textarea>
+                    <p id="abc"></p>
+                    @*<textarea class="text" id="selectQuery" rows="20" cols="100" name="fullQuery"></textarea>*@
+                    @Html.TextAreaFor(model => model.selectQuery, new { rows = 20, cols = 100})
                     @*<button class="btn" style="position: relative; bottom: 8px; height: 25px;">Execute Query</button>*@
-                    <input type="button" style="position: relative; bottom: 8px; height: 25px;" value="Execute Query" onclick="location.href='@Url.Action("Report", "Home")'" />
+                    <input type="submit" style="position: relative; bottom: 8px; height: 25px;" value="Execute Query"/>
+                    @*onclick="location.href='@Url.Action("Report", "Home")'*@
                 </div>
                 <table class="table1" style="width: 100%;">
                     <tr style="background-color:gray;">
@@ -151,7 +161,9 @@
                 </table>
             </div>
         </div>
+        <p>@ViewBag.Error</p>
     </div>
-
+    }
 </body>
 </html>
+    

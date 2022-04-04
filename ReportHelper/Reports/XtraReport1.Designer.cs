@@ -36,9 +36,14 @@
             // Detail
             // 
             this.Detail.Dpi = 100F;
-            this.Detail.HeightF = 100F;
+            this.Detail.Font = new System.Drawing.Font("Times New Roman", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Detail.HeightF = 16.66667F;
+            this.Detail.KeepTogether = true;
+            this.Detail.MultiColumn.Layout = DevExpress.XtraPrinting.ColumnLayout.AcrossThenDown;
+            this.Detail.MultiColumn.Mode = DevExpress.XtraReports.UI.MultiColumnMode.UseColumnCount;
             this.Detail.Name = "Detail";
             this.Detail.Padding = new DevExpress.XtraPrinting.PaddingInfo(0, 0, 0, 0, 100F);
+            this.Detail.StylePriority.UseFont = false;
             this.Detail.TextAlignment = DevExpress.XtraPrinting.TextAlignment.TopLeft;
             // 
             // TopMargin
@@ -63,6 +68,7 @@
             this.Detail,
             this.TopMargin,
             this.BottomMargin});
+            this.Margins = new System.Drawing.Printing.Margins(102, 100, 100, 100);
             this.Version = "16.1";
             ((System.ComponentModel.ISupportInitialize)(this)).EndInit();
 

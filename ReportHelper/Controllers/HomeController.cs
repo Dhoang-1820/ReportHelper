@@ -11,7 +11,7 @@ using System.Web.Script.Serialization;
 using ReportHelper.Reports;
 using DevExpress.XtraReports.UI;
 using System.Drawing;
-
+using ReportHelper.Models;
 namespace ReportHelper.Controllers
 {
     public class HomeController : Controller
@@ -98,12 +98,54 @@ namespace ReportHelper.Controllers
 
             ViewBag.Funtion = Funtion;
             ViewBag.Sort = Sort;
-            return View();
+            strQuery qry = new strQuery();
+            return View(qry);  
+        }
+        [HttpPost]
+        public ActionResult Index(strQuery qr)
+        {
+            String strQuery = qr.selectQuery;
+
+            SqlConnection con = ConnectToDb();
+            SqlCommand sqlcmd = new SqlCommand(strQuery, con);
+            sqlcmd.CommandType = CommandType.Text;
+
+            SqlDataAdapter Adpt = new SqlDataAdapter(strQuery, con);
+            try
+            {
+                sqlcmd.ExecuteReader();
+                return RedirectToAction("Report", new { message = strQuery });
+            }
+            catch (SqlException ex)
+            {
+                
+                ViewBag.Error = ex.State;
+                con.Close();
+                return View("Index");
+            }
+            
+        }
+        public ActionResult Report (String message)
+        {
+
+            String qr = message;
+            
+            SqlConnection cnn = ConnectToDb();
+            // dùng DataSet vì có thể sử dụng count để đếm cột
+            DataSet dt = new DataSet();
+            SqlDataAdapter da = new SqlDataAdapter();
+            da.SelectCommand = new SqlCommand(qr, cnn);
+            da.Fill(dt);
+            XtraReport1 xrp = new XtraReport1();
+            xrp.DataSource = dt;
+            InitBands(xrp);
+            InitDetailsBaseXRTable(xrp);
+            return View(xrp);
         }
         public SqlConnection ConnectToDb()
         {
             SqlConnection conn = new SqlConnection();
-            String conn_str = "Data Source=DESKTOP-8BQ2NC6;Initial Catalog=QLVT;Integrated Security=True";
+            String conn_str = "Data Source=DESKTOP-8BQ2NC6;Initial Catalog=QLSV;Integrated Security=True";
             conn.ConnectionString = conn_str;
             conn.Open();
             return conn;
@@ -131,25 +173,6 @@ namespace ReportHelper.Controllers
             }
             return dt;
         }
-        
-        public ActionResult Report()
-        {
-            string qr = "select * from nhanvien";
-            
-            SqlCommand cmd = new SqlCommand();
-            SqlConnection cnn = ConnectToDb();
-            // dùng DataSet vì có thể sử dụng count để đếm cột
-            DataSet dt = new DataSet();
-            SqlDataAdapter da = new SqlDataAdapter();
-            da.SelectCommand = new SqlCommand(qr, cnn);
-            da.Fill(dt);
-            XtraReport1 xrp = new XtraReport1();
-            xrp.DataSource = dt;
-            InitBands(xrp);
-            InitDetailsBaseXRTable(xrp);
-            return View(xrp);
-        }
-
         public void InitBands(XtraReport report)
         {
             var detail = new DetailBand() { HeightF = 20 };
