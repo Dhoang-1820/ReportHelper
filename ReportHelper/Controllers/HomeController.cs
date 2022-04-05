@@ -145,7 +145,7 @@ namespace ReportHelper.Controllers
         public SqlConnection ConnectToDb()
         {
             SqlConnection conn = new SqlConnection();
-            String conn_str = "Data Source=DESKTOP-8BQ2NC6;Initial Catalog=QLSV;Integrated Security=True";
+            String conn_str = "Data Source=DESKTOP-8BQ2NC6;Initial Catalog=QLVT;Integrated Security=True";
             conn.ConnectionString = conn_str;
             conn.Open();
             return conn;
