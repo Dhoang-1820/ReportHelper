@@ -13,7 +13,7 @@
 
     @using (Html.BeginForm("Index", "Home", FormMethod.Post))
     {
-        <input type="text"  name="selectedItems" id="selectedItems" style="width: 100%;" />
+        <input type="hidden"  name="selectedItems" id="selectedItems" style="width: 100%;" />
 
     <style>
         .dropbox {
@@ -22,57 +22,43 @@
         }
        
     </style>
-    <link href="~/Content/myStyle.css" rel="stylesheet" />
+    <link href="~/Content/myStyle.css" rel="stylesheet"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css" />
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.1/jquery.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/jstree.min.js"></script>
     <script>
-        const set = new Set()
-        const parentFrom = new Set();
         $(function () {
             $('#jstree').on('changed.jstree', function (e, data) {
                 var i, j;
                 var query = "select "
                 var from = "\nfrom "
                 var arrField = []
+                var arrFieldForTable = []
+                var arrFieldId = []
                 var arrTable = []
                 var selectedItems = []
+                var node
                 for(i = 0, j = data.selected.length; i < j; i++) {
                     //Fetch the Id.
-                    var id = data.selected[i];
-                    //Remove the ParentId.
-                    if(id.indexOf('-') != -1){
-                        id = id.split("-")[1];
+                    //var id = data.selected[i];
+                    ////Remove the ParentId.
+                    //if(id.indexOf('-') != -1){
+                    //    id = id.split("-")[1];
+                    //}
+                    ////Add the Node to the JSON Array.
+                    //selectedItems.push({
+                    //    text: data.instance.get_node(data.selected[i]).text,
+                    //    id: id,
+                    //    parent: data.node.parents[0]
+                    //});
+                    // đưa các field được chọn vào arrField từ arr các node được chọn
+                    if (!data.instance.is_parent(data.selected[i])){
+                        node = data.instance.get_node(data.selected[i])
+                        arrField.push(data.instance.get_node(node.parent).text + "." + node.text)
+                        arrFieldId.push(node)
+                        arrFieldForTable.push(node.text)
                     }
-                    //Add the Node to the JSON Array.
-                    selectedItems.push({
-                        text: data.instance.get_node(data.selected[i]).text,
-                        id: id,
-                        parent: data.node.parents[0]
-                    });
-                    // đưa các field được chọn vào arrField
-                    if (!data.instance.is_parent(data.selected[i]))
-                        arrField.push(data.instance.get_node(data.selected[i]).text)
-                    // hàm đưa vào table
-                    function addRow() {
-                        var table = document.getElementById("myTable");
-                        var rowCount = table.rows.length;
-                        var row = table.insertRow(rowCount);
-                        var colCount = table.rows[0].cells.length;
-                        for(var i=0; i<colCount; i++) {
-                            var newcell	= row.insertCell(i);
-                            newcell.innerHTML = table.rows[1].cells[i].innerHTML;
-                            switch(newcell.childNodes[0].name){
-                                case "field":
-                                    newcell.childNodes[0].value = "Nhanvien"
-                                    break
-                                case "table":
-                                    newcell.childNodes[0].value = "Ho"
-                                    break
-                            }
-                        }
-                    }
-                    //addRow();
+                        
                 }
                 // lấy id node cha, dùng Set để tránh lặp lại.
                 var allIdNodesPath = Object.keys(data.selected.reduce(function (acc, nodeId) {
@@ -86,14 +72,50 @@
                 for (let i = 0; i < allIdNodesPath.length - 1; i++){
                     var pnode = data.instance.get_node(allIdNodesPath[i])
                     arrTable.push(pnode.text)
-                }               
+                }     
+                var arrTd = ["<input type='text' disabled style='border: 0; padding: 0; text-align: center; color: black' name='field' />",
+                             "<input type='text' disabled style='border: 0; padding: 0; text-align: center; color: black' name='table'/>",   
+                             "<select class='dropbox'> <option value='None'>None</option><option value='Count'>Count</option><option value='Sum'>Sum</option><option value='Min'>Min</option><option value='Max'>Max</option><option value='Avg'>Avg</option><option value='Group By'>Group By</option>",
+                             "<select class='dropbox'> <option value='None'>None</option><option value='Ascending'>Ascending</option><option value='Descending'>Descending</select>",
+                             "<input style='height: 19px; padding: 0;'>"
+                            ]
+                //
+                var table = document.getElementById("myTable");
+                function addRow() {
+                    var tbody = table.getElementsByTagName("tbody")[0]
+                    for (var i=0; i<arrField.length; i++){
+                        var tr = document.createElement("tr")
+                        for (var j=0; j<5; j++){
+                            var newCell = tr.insertCell()
+                            newCell.innerHTML = arrTd[j]
+                            switch(newCell.childNodes[0].name){
+                                case "field":
+                                    newCell.childNodes[0].value = arrFieldForTable[i]
+                                    break
+                                case "table":
+                                    var parent = data.instance.get_node(arrFieldId[i].parent)
+                                    newCell.childNodes[0].value = parent.text
+                                    break
+                            }
+                        }   
+                        tbody.appendChild(tr)
+                    }
+                }
+                // xoá toàn bộ bảng trừ header         
+                //$("#myTable tbody tr").remove();  //jquery
+                function remove(){
+                    var tbody = table.getElementsByTagName("tbody")[0]
+                    tbody.innerHTML = "";
+                }
+                remove()
+                // thêm field, table vào bảng
+                addRow()
                 // nối để tạo query
                 from += arrTable.join(", ")
                 query += arrField.join(", ")
                 document.getElementById("selectQuery").value = query + from       
-                
                 //Serialize the JSON Array and save in HiddenField.
-                $('#selectedItems').val(JSON.stringify(selectedItems));
+                //$('#selectedItems').val(JSON.stringify(selectedItems))
             }).jstree({
                 "core": {
                     "themes": {
@@ -107,7 +129,6 @@
                 "plugins": ["wholerow", "checkbox"],
             });
         })  
-
     </script>
     <div class="container">
         <div class="navbar">
@@ -115,7 +136,6 @@
             </div>
             <div class="content">
                 <div>
-                    <p id="abc"></p>
                     @*<textarea class="text" id="selectQuery" rows="20" cols="100" name="fullQuery"></textarea>*@
                     @Html.TextAreaFor(model => model.selectQuery, new { rows = 20, cols = 100})
                     @*<button class="btn" style="position: relative; bottom: 8px; height: 25px;">Execute Query</button>*@
@@ -123,39 +143,19 @@
                     @*onclick="location.href='@Url.Action("Report", "Home")'*@
                 </div>
                 <table class="table1" style="width: 100%;" id="myTable">
-                    <tr style="background-color:gray;">
-                        <th style="width: 20%;">Field</th>
-                        <th style="width: 20%;">Table</th>
-                        <th style="width: 15%;">Funtion</th>
-                        <th style="width: 15%;">Sort</th>
-                        <th style="width: 20%;">Criteria</th>
-                    </tr>
-                    <tr>
-                        <td><input type="text" disabled style="border: 0; padding: 0; text-align: center; color: black" name="field"/></td>
-                        <td><input type="text" disabled style="border: 0; padding: 0; text-align: center; color: black" name="table"/></td>
-                        <td>
-                            <select class="dropbox">
-                                <option value="None">None</option>
-                                <option value="Count">Count</option>
-                                <option value="Sum">Sum</option>
-                                <option value="Min">Min</option>
-                                <option value="Max">Max</option>
-                                <option value="Avg">Avg</option>
-                                <option value="Group By">Group By</option>
-                            </select>
-                        </td>
-                        <td>
-                            <select class="dropbox">
-                                <option value="None">None</option>
-                                <option value="Ascending">Ascending</option>
-                                <option value="Descending">Descending</option>
-                            </select>
-                        </td>
-                        <td>
-                            <input style="height: 19px; padding: 0;">
-                        </td>
-                    </tr>
-
+                    <thead>
+                        <tr style="background-color:gray;">
+                            <th style="width: 20%;">Field</th>
+                            <th style="width: 20%;">Table</th>
+                            <th style="width: 15%;">Funtion</th>
+                            <th style="width: 15%;">Sort</th>
+                            <th style="width: 20%;">Criteria</th>
+                        </tr>
+                    </thead>
+                    
+                    <tbody>
+                        
+                    </tbody>
                 </table>
             </div>
         </div>

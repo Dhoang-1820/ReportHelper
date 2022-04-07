@@ -204,9 +204,9 @@ D:\Programming\.Net tutorial\ReportHelper\ReportHelper\bin\de\DevExpress.Xpo.v16
 D:\Programming\.Net tutorial\ReportHelper\ReportHelper\bin\es\DevExpress.Xpo.v16.1.resources.dll
 D:\Programming\.Net tutorial\ReportHelper\ReportHelper\bin\ja\DevExpress.Xpo.v16.1.resources.dll
 D:\Programming\.Net tutorial\ReportHelper\ReportHelper\bin\ru\DevExpress.Xpo.v16.1.resources.dll
+D:\Programming\.Net tutorial\ReportHelper\ReportHelper\obj\Debug\ReportHelper.csprojResolveAssemblyReference.cache
 D:\Programming\.Net tutorial\ReportHelper\ReportHelper\obj\Debug\ReportHelper.Reports.XtraReport1.resources
 D:\Programming\.Net tutorial\ReportHelper\ReportHelper\obj\Debug\ReportHelper.csproj.GenerateResource.Cache
 D:\Programming\.Net tutorial\ReportHelper\ReportHelper\obj\Debug\ReportHelper.dll.licenses
 D:\Programming\.Net tutorial\ReportHelper\ReportHelper\obj\Debug\ReportHelper.dll
 D:\Programming\.Net tutorial\ReportHelper\ReportHelper\obj\Debug\ReportHelper.pdb
-D:\Programming\.Net tutorial\ReportHelper\ReportHelper\obj\Debug\ReportHelper.csprojResolveAssemblyReference.cache
