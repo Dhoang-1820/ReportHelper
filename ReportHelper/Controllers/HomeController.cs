@@ -58,46 +58,6 @@ namespace ReportHelper.Controllers
             }
 
             ViewBag.Json = (new JavaScriptSerializer()).Serialize(nodes);
-
-            List<SelectListItem> Funtion = new List<SelectListItem>() {
-                new SelectListItem {
-                    Text = "None", Value = "1"
-                },
-                new SelectListItem {
-                    Text = "Count", Value = "2"
-                },
-                new SelectListItem {
-                    Text = "Sum", Value = "3"
-                },
-                new SelectListItem {
-                    Text = "Min", Value = "4"
-                },
-                new SelectListItem {
-                    Text = "Max", Value = "5"
-                },
-                new SelectListItem {
-                    Text = "Avg", Value = "6"
-                },
-                new SelectListItem {
-                    Text = "Group By", Value = "7"
-                }
-
-            };
-            List<SelectListItem> Sort = new List<SelectListItem>()
-            {
-                new SelectListItem {
-                    Text = "None", Value = "1"
-                },
-                new SelectListItem {
-                    Text = "Ascending", Value = "2"
-                },
-                new SelectListItem {
-                    Text = "Descending", Value = "3"
-                }
-            };
-
-            ViewBag.Funtion = Funtion;
-            ViewBag.Sort = Sort;
             strQuery qry = new strQuery();
             return View(qry);  
         }
@@ -190,7 +150,7 @@ namespace ReportHelper.Controllers
             var tableHeader = new XRTable();
             tableHeader.Height = 20;
             tableHeader.Width = (report.PageWidth - (report.Margins.Left + report.Margins.Right));
-            tableHeader.BackColor = Color.Gray;
+            tableHeader.BackColor = Color.LightGray;
             tableHeader.TextAlignment = DevExpress.XtraPrinting.TextAlignment.MiddleCenter;
 
 
