@@ -7,24 +7,38 @@
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>Index</title>
+    
 </head>
 <body>
-
-
     @using (Html.BeginForm("Index", "Home", FormMethod.Post, new { onkeydown = "return event.key != 'Enter'" }))
     {
         <input type="hidden"  name="selectedItems" id="selectedItems" style="width: 100%;" />
-        <div res></div>
-        <div ress></div>
-
     <style>
         .dropboxfuntion, .dropboxsort {
             width: 100%;
             height: 25px;
         }
-       
+        .jstree-1  {
+            width: 270px;
+            height: 100%;
+        }
+
+        .navbar {
+            display: flex;
+        }
+
+        .text {
+            height: 310px;
+        }
+
+        .table1, th, td {
+            border-collapse: collapse;   
+            border: 1px solid black;
+            line-height: 25px; 
+            padding: 5px;
+            text-align: center; 
+        }
     </style>
-    <link href="~/Content/myStyle.css" rel="stylesheet"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css" />
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.1/jquery.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/jstree.min.js"></script>
@@ -60,7 +74,7 @@
                         arrFieldId.push(node)
                         arrFieldForTable.push(node.text)
                     }
-                        
+
                 }
                 // lấy id node cha, dùng Set để tránh lặp lại.
                 var allIdNodesPath = Object.keys(data.selected.reduce(function (acc, nodeId) {
@@ -74,13 +88,13 @@
                 for (let i = 0; i < allIdNodesPath.length - 1; i++){
                     var pnode = data.instance.get_node(allIdNodesPath[i])
                     arrTable.push(pnode.text)
-                }     
+                }
                 var arrTd = ["<input type='text' disabled style='border: 0; padding: 0; text-align: center; color: black; width: 100px;' name='field' />",
-                             "<input type='text' disabled style='border: 0; padding: 0; text-align: center; color: black; width: 100px;' name='table'/>",   
-                             "<select class='dropboxfuntion'> <option value='None'>None</option><option value='Count'>Count</option><option value='Sum'>Sum</option><option value='Min'>Min</option><option value='Max'>Max</option><option value='Avg'>Avg</option><option value='Group By'>Group By</option>",
+                             "<input type='text' disabled style='border: 0; padding: 0; text-align: center; color: black; width: 100px;' name='table'/>",
+                             "<select class='dropboxfuntion'> <option value='None'>None</option><option value='Count'>Count</option><option value='Sum'>Sum</option><option value='Min'>Min</option><option value='Max'>Max</option><option value='Avg'>Avg</option>",
                              "<select class='dropboxsort'> <option value='None'>None</option> <option value='Ascending'>Ascending</option><option value='Descending'>Descending</select>",
-                             "<input type='checkbox' style='height: 15px; width: 20px; padding: 0; text-align:center'>",
-                             "<input class='where' style='height: 19px; padding: 0; width: 97%;'>"
+                             "<input class='group' type='checkbox' style='height: 15px; width: 20px; padding: 0; text-align:center'>",
+                             "<input class='where' style='height: 19px; padding: 0; width: 97%; text-align:center;'>"
                             ]
                 //
                 var table = document.getElementById("myTable")
@@ -101,11 +115,11 @@
                                     newCell.childNodes[0].value = parent.text
                                     break
                             }
-                        }   
+                        }
                         tbody.appendChild(tr)
                     }
                 }
-                // xoá toàn bộ bảng trừ header         
+                // xoá toàn bộ bảng trừ header
                 //$("#myTable tbody tr").remove();  //jquery
                 function remove(){
                     var tbody = table.getElementsByTagName("tbody")[0]
@@ -115,12 +129,10 @@
                 // thêm field, table vào bảng
                 addRow()
                 //
-                
-                //getSelected()
                 // nối để tạo query
                 from += arrTable.join(", ")
                 query += arrField.join(", ")
-                document.getElementById("selectQuery").value = query + from   
+                document.getElementById("selectQuery").value = query + from
                 //Serialize the JSON Array and save in HiddenField.
                 //$('#selectedItems').val(JSON.stringify(selectedItems))
             }).jstree({
@@ -136,39 +148,61 @@
                 "plugins": ["wholerow", "checkbox"],
             });
         })
-        $(function(){           
+        //
+        $(function(){
             var table = document.getElementById("myTable")
-            document.querySelector("[res]").innerHTML="result";
-            document.querySelector("[ress]").innerHTML="result 2";
+            // lấy sum, count, min, max
             $('#myTable').on('change', '.dropboxfuntion' , function () {
-               // console.log($(this))
-                document.querySelector("[res]").innerHTML=$(this).find(":selected").val() + "(" + $(this).closest('tr').find('input:eq(1)').val() +"."+ $(this).closest('tr').find('input:eq(0)').val() + ")";
-                //var e = $(this).closest('tr').find('input:eq(0)')               
+                var arrFuntion = [], funt = " "
+                var checkAllChecked = false
+                var rowCount = table.rows.length;
+                for(var i=1; i<rowCount; i++) {
+                    var row = table.rows[i]
+                    var chkbox = row.cells[4].childNodes[0]
+                    if (chkbox.checked){
+                        console.log(chkbox.checked)
+                        checkAllChecked = true
+                    }
+                }
+                for(var i=1; i<rowCount; i++) {
+                    var row = table.rows[i];
+                    var fieldrow = row.cells[0].childNodes[0].value
+                    var tablerow = row.cells[1].childNodes[0].value
+                    var drpbox = row.cells[2].childNodes[0].value
+                    console.log(checkAllChecked, i)
+                    if (checkAllChecked){                           // các field không nằm trong hàm tổng hợp thì phải nằm trong group by
+                        $('.group').trigger('change')
+                    }
+                }
+
             });
+            // lấy order by
             $('#myTable').on('change', '.dropboxsort' , function () {
-                //console.log($(this))
-                //var orderType = " "
-                //if ( $(this).find(":selected").val() == "Descending"){
-                //    orderType = " Desc"
-                //} 
-                //document.querySelector("[ress]").innerHTML="Order by " + $(this).closest('tr').find('input:eq(1)').val() +"."+ $(this).closest('tr').find('input:eq(0)').val() + orderType;
-                var arrWhere = [], where = "Order by "
+                var arrOrder = [], order = "order by "
                 var rowCount = table.rows.length;
                 for(var i=1; i<rowCount; i++) {
                     var row = table.rows[i];
                     var fieldRow = row.cells[0].childNodes[0].value
                     var tableRow = row.cells[1].childNodes[0].value
-                    if (row.cells[3].childNodes[0].value == 'Descending'){
-                        var txtbox = 'desc'
-                    } 
+                    var txtbox = row.cells[3].childNodes[0].value
                     if (txtbox != 'None') {
-                        console.log(txtbox.value != 'None')
-                        arrWhere.push(fieldRow + " " + txtbox)
-                    }                         
+                        if(txtbox == 'Descending'){
+                            txtbox = 'desc'
+                        } else {
+                            txtbox = 'asc'
+                        }
+                        arrOrder.push(tableRow + "." + fieldRow + " " + txtbox)
+                    }
                 }
-                console.log(arrWhere)
+                order += arrOrder.join(", ")
+                var lines = document.getElementById("selectQuery").value
+                lines = lines.split(/\n/)
+                lines[4] = order
+                lines = lines.join("\n")
+                document.getElementById("selectQuery").value = lines
             });
-            $('#myTable').on('change', '.where', function (e) {
+            // lấy where
+            $('#myTable').on('change', '.where', function () {
                 var arrWhere = [], where = "where "
                 var rowCount = table.rows.length;
                 for(var i=1; i<rowCount; i++) {
@@ -177,16 +211,40 @@
                     var tableRow = row.cells[1].childNodes[0].value
                     var txtbox = row.cells[5].childNodes[0].value
                     if (txtbox != '') {
-                        arrWhere.push(tableRow + "." + fieldRow + " = " + "'" + txtbox + "'")
-                    }           
-                    
+                        arrWhere.push(tableRow + "." + fieldRow + " " + txtbox)
+                    }
                 }
                 where += arrWhere.join(" and ")
                 var lines = document.getElementById("selectQuery").value
                 lines = lines.split(/\n/)
                 lines[2] = where
                 lines = lines.join("\n")
-                //console.log(lines)
+                document.getElementById("selectQuery").value = lines
+            });
+            // lấy group by
+            $('#myTable').on('change', '.group', function () {
+                var arrGroup = [], group = "group by "
+                var rowCount = table.rows.length;
+                for(var i=1; i<rowCount; i++) {
+                    var row = table.rows[i];
+                    var fieldRow = row.cells[0].childNodes[0].value
+                    var tableRow = row.cells[1].childNodes[0].value
+                    var chkbox = row.cells[4].childNodes[0]
+                    var funt = row.cells[2].childNodes[0].value
+                    if (funt == 'None'){
+                        row.cells[4].childNodes[0].checked = true
+                    } else {
+                        row.cells[4].childNodes[0].checked = false
+                    }
+                    if (chkbox.checked) {
+                        arrGroup.push(tableRow + "." + fieldRow)
+                    }
+                }
+                group += arrGroup.join(", ")
+                var lines = document.getElementById("selectQuery").value
+                lines = lines.split(/\n/)
+                lines[3] = group
+                lines = lines.join("\n")
                 document.getElementById("selectQuery").value = lines
             });
         });
@@ -234,7 +292,7 @@
                                 </select>
                             </td>
                             <td>
-                                <input type="checkbox" style="height: 15px; width: 20px; padding: 0; text-align:center">
+                                <input  class="group" type="checkbox" style="height: 15px; width: 20px; padding: 0; text-align:center">
                             </td>
                             <td>
                                 <input class="where" style="height: 19px; padding: 0; text-align:center; width: 97%;">

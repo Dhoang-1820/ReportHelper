@@ -1,6 +1,7 @@
 D:\Programming\.Net tutorial\ReportHelper\ReportHelper\bin\ReportHelper.dll.config
 D:\Programming\.Net tutorial\ReportHelper\ReportHelper\bin\ReportHelper.dll
 D:\Programming\.Net tutorial\ReportHelper\ReportHelper\bin\ReportHelper.pdb
+D:\Programming\.Net tutorial\ReportHelper\ReportHelper\bin\Antlr3.Runtime.dll
 D:\Programming\.Net tutorial\ReportHelper\ReportHelper\bin\DevExpress.Charts.v16.1.Core.dll
 D:\Programming\.Net tutorial\ReportHelper\ReportHelper\bin\DevExpress.Data.v16.1.dll
 D:\Programming\.Net tutorial\ReportHelper\ReportHelper\bin\DevExpress.Office.v16.1.Core.dll
@@ -38,10 +39,13 @@ D:\Programming\.Net tutorial\ReportHelper\ReportHelper\bin\System.Web.Helpers.dl
 D:\Programming\.Net tutorial\ReportHelper\ReportHelper\bin\System.Web.Http.dll
 D:\Programming\.Net tutorial\ReportHelper\ReportHelper\bin\System.Web.Http.WebHost.dll
 D:\Programming\.Net tutorial\ReportHelper\ReportHelper\bin\System.Web.Mvc.dll
+D:\Programming\.Net tutorial\ReportHelper\ReportHelper\bin\System.Web.Optimization.dll
 D:\Programming\.Net tutorial\ReportHelper\ReportHelper\bin\System.Web.Razor.dll
 D:\Programming\.Net tutorial\ReportHelper\ReportHelper\bin\System.Web.WebPages.Deployment.dll
 D:\Programming\.Net tutorial\ReportHelper\ReportHelper\bin\System.Web.WebPages.dll
 D:\Programming\.Net tutorial\ReportHelper\ReportHelper\bin\System.Web.WebPages.Razor.dll
+D:\Programming\.Net tutorial\ReportHelper\ReportHelper\bin\WebActivatorEx.dll
+D:\Programming\.Net tutorial\ReportHelper\ReportHelper\bin\WebGrease.dll
 D:\Programming\.Net tutorial\ReportHelper\ReportHelper\bin\WebMatrix.Data.dll
 D:\Programming\.Net tutorial\ReportHelper\ReportHelper\bin\DevExpress.XtraCharts.v16.1.Web.dll
 D:\Programming\.Net tutorial\ReportHelper\ReportHelper\bin\DevExpress.Web.ASPxHtmlEditor.v16.1.dll
@@ -204,7 +208,6 @@ D:\Programming\.Net tutorial\ReportHelper\ReportHelper\bin\de\DevExpress.Xpo.v16
 D:\Programming\.Net tutorial\ReportHelper\ReportHelper\bin\es\DevExpress.Xpo.v16.1.resources.dll
 D:\Programming\.Net tutorial\ReportHelper\ReportHelper\bin\ja\DevExpress.Xpo.v16.1.resources.dll
 D:\Programming\.Net tutorial\ReportHelper\ReportHelper\bin\ru\DevExpress.Xpo.v16.1.resources.dll
-D:\Programming\.Net tutorial\ReportHelper\ReportHelper\obj\Debug\ReportHelper.csprojResolveAssemblyReference.cache
 D:\Programming\.Net tutorial\ReportHelper\ReportHelper\obj\Debug\ReportHelper.Reports.XtraReport1.resources
 D:\Programming\.Net tutorial\ReportHelper\ReportHelper\obj\Debug\ReportHelper.csproj.GenerateResource.Cache
 D:\Programming\.Net tutorial\ReportHelper\ReportHelper\obj\Debug\ReportHelper.dll.licenses
