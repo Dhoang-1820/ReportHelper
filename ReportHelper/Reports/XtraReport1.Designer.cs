@@ -68,7 +68,7 @@
             this.Detail,
             this.TopMargin,
             this.BottomMargin});
-            this.Margins = new System.Drawing.Printing.Margins(102, 100, 100, 100);
+            this.Margins = new System.Drawing.Printing.Margins(52, 51, 100, 100);
             this.Version = "16.1";
             ((System.ComponentModel.ISupportInitialize)(this)).EndInit();
 

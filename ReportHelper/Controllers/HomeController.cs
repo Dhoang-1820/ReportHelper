@@ -20,8 +20,8 @@ namespace ReportHelper.Controllers
         {
             int i = 1;
             List<TreeNode> nodes = new List<TreeNode>();
-            DataTable dt = GetDataTableFromDb("select object_id as Id, name as Name from sys.tables where name <> 'sysdiagrams'");
-            DataTable dt2 = GetDataTableFromDb("SELECT C.name AS Name, C.object_id as SubId FROM sys.objects AS T JOIN sys.columns AS C ON T.object_id = C.object_id WHERE T.type_desc = 'USER_TABLE' and C.object_id <> 1221579390");
+            DataTable dt = GetDataTableFromDb("select object_id as Id, name as Name from sys.tables where name <> 'sysdiagrams' and is_ms_shipped <> 1");
+            DataTable dt2 = GetDataTableFromDb("SELECT C.name AS Name, C.object_id as SubId FROM sys.objects AS T JOIN sys.columns AS C ON T.object_id = C.object_id WHERE T.type_desc = 'USER_TABLE' and T.is_ms_shipped <> 1 and C.name <> 'rowguid'and C.object_id <> 1029578706");
 
             dt2.Columns.Add("Id", typeof(System.Int32));
             foreach (DataRow row in dt2.Rows)
@@ -79,7 +79,7 @@ namespace ReportHelper.Controllers
             catch (SqlException ex)
             {
                 
-                ViewBag.Error = ex.State;
+                ViewBag.Error = ex.Message;
                 con.Close();
                 return View("Index");
             }
@@ -91,7 +91,6 @@ namespace ReportHelper.Controllers
             String qr = message;
             
             SqlConnection cnn = ConnectToDb();
-            // dùng DataSet vì có thể sử dụng count để đếm cột
             DataSet dt = new DataSet();
             SqlDataAdapter da = new SqlDataAdapter();
             da.SelectCommand = new SqlCommand(qr, cnn);

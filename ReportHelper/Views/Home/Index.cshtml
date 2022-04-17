@@ -7,7 +7,6 @@
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>Index</title>
-    
 </head>
 <body>
     @using (Html.BeginForm("Index", "Home", FormMethod.Post, new { onkeydown = "return event.key != 'Enter'" }))
@@ -52,21 +51,9 @@
                 var arrFieldForTable = []
                 var arrFieldId = []
                 var arrTable = []
-                var selectedItems = []
+                //var selectedItems = []
                 var node
                 for(i = 0, j = data.selected.length; i < j; i++) {
-                    //Fetch the Id.
-                    //var id = data.selected[i];
-                    ////Remove the ParentId.
-                    //if(id.indexOf('-') != -1){
-                    //    id = id.split("-")[1];
-                    //}
-                    ////Add the Node to the JSON Array.
-                    //selectedItems.push({
-                    //    text: data.instance.get_node(data.selected[i]).text,
-                    //    id: id,
-                    //    parent: data.node.parents[0]
-                    //});
                     // đưa các field được chọn vào arrField từ arr các node được chọn
                     if (!data.instance.is_parent(data.selected[i])){
                         node = data.instance.get_node(data.selected[i])
@@ -120,7 +107,6 @@
                     }
                 }
                 // xoá toàn bộ bảng trừ header
-                //$("#myTable tbody tr").remove();  //jquery
                 function remove(){
                     var tbody = table.getElementsByTagName("tbody")[0]
                     tbody.innerHTML = "";
@@ -128,13 +114,11 @@
                 remove()
                 // thêm field, table vào bảng
                 addRow()
-                //
                 // nối để tạo query
                 from += arrTable.join(", ")
                 query += arrField.join(", ")
+                lineSelect = query
                 document.getElementById("selectQuery").value = query + from
-                //Serialize the JSON Array and save in HiddenField.
-                //$('#selectedItems').val(JSON.stringify(selectedItems))
             }).jstree({
                 "core": {
                     "themes": {
@@ -153,28 +137,35 @@
             var table = document.getElementById("myTable")
             // lấy sum, count, min, max
             $('#myTable').on('change', '.dropboxfuntion' , function () {
-                var arrFuntion = [], funt = " "
-                var checkAllChecked = false
-                var rowCount = table.rows.length;
-                for(var i=1; i<rowCount; i++) {
-                    var row = table.rows[i]
-                    var chkbox = row.cells[4].childNodes[0]
-                    if (chkbox.checked){
-                        console.log(chkbox.checked)
-                        checkAllChecked = true
-                    }
-                }
+                var lines = document.getElementById("selectQuery").value
+                lines = lines.split(/\n/)
+                var rowCount = table.rows.length
                 for(var i=1; i<rowCount; i++) {
                     var row = table.rows[i];
                     var fieldrow = row.cells[0].childNodes[0].value
                     var tablerow = row.cells[1].childNodes[0].value
                     var drpbox = row.cells[2].childNodes[0].value
-                    console.log(checkAllChecked, i)
-                    if (checkAllChecked){                           // các field không nằm trong hàm tổng hợp thì phải nằm trong group by
-                        $('.group').trigger('change')
+                    newLines = lines[0].split(', ')
+                    let index = newLines.findIndex(element => element.includes(tablerow + "." + fieldrow))
+                    if (drpbox != 'None'){
+                        if (i == 1) {
+                            newLines[index] = 'select ' + drpbox + "(" + tablerow + "." + fieldrow + ")"
+                        } else {
+                            newLines[index] = drpbox + "(" + tablerow + "." + fieldrow + ")"
+                        }
+                        
+                    } else {
+                        if (i == 1) {
+                            newLines[index] = 'select ' + tablerow + "." + fieldrow 
+                        } else {
+                            newLines[index] = tablerow + "." + fieldrow 
+                        }
                     }
+                    lines[0] = newLines.join(', ')
                 }
-
+                lines = lines.join("\n")
+                document.getElementById("selectQuery").value = lines
+                $('.group').trigger('change')
             });
             // lấy order by
             $('#myTable').on('change', '.dropboxsort' , function () {
@@ -214,7 +205,7 @@
                         arrWhere.push(tableRow + "." + fieldRow + " " + txtbox)
                     }
                 }
-                where += arrWhere.join(" and ")
+                where += arrWhere.join("  ")
                 var lines = document.getElementById("selectQuery").value
                 lines = lines.split(/\n/)
                 lines[2] = where
@@ -250,12 +241,13 @@
         });
     </script>
     <div class="container">
+        <p style="color: red;">@ViewBag.Error</p>
         <div class="navbar">
             <div id="jstree">
             </div>
             <div class="content">
                 <div>
-                    @Html.TextAreaFor(model => model.selectQuery, new { rows = 20, cols = 100})
+                    @Html.TextAreaFor(qry => qry.selectQuery, new { rows = 20, cols = 100})
                     <input type="submit"  style="position: relative; bottom: 8px; height: 25px;" value="Execute Query" />
                 </div>
                 <table class="table1" style="width: 100%;" id="myTable">
@@ -302,7 +294,7 @@
                 </table>
             </div>
         </div>
-        <p>@ViewBag.Error</p>
+        
     </div>
     }
 </body>
