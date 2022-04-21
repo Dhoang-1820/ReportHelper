@@ -8,5 +8,6 @@ namespace ReportHelper.Models
     public class strQuery
     {   
         public String selectQuery { get; set; }
+        public String title { get; set; }
     }
 }

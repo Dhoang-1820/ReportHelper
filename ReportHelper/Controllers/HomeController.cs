@@ -65,7 +65,7 @@ namespace ReportHelper.Controllers
         public ActionResult Index(strQuery qr)
         {
             String strQuery = qr.selectQuery;
-
+            String strTitle = qr.title;
             SqlConnection con = ConnectToDb();
             SqlCommand sqlcmd = new SqlCommand(strQuery, con);
             sqlcmd.CommandType = CommandType.Text;
@@ -74,7 +74,7 @@ namespace ReportHelper.Controllers
             try
             {
                 sqlcmd.ExecuteReader();
-                return RedirectToAction("Report", new { message = strQuery });
+                return RedirectToAction("Report", new { message = strQuery, message2 = strTitle });
             }
             catch (SqlException ex)
             {
@@ -85,11 +85,15 @@ namespace ReportHelper.Controllers
             }
             
         }
-        public ActionResult Report (String message)
+        public ActionResult Report (String message, String message2)
         {
 
             String qr = message;
-            
+            String title = "";
+            if (message2 != null)
+            {
+               title = message2.ToUpper();
+            }
             SqlConnection cnn = ConnectToDb();
             DataSet dt = new DataSet();
             SqlDataAdapter da = new SqlDataAdapter();
@@ -98,7 +102,7 @@ namespace ReportHelper.Controllers
             XtraReport1 xrp = new XtraReport1();
             xrp.DataSource = dt;
             InitBands(xrp);
-            InitDetailsBaseXRTable(xrp);
+            InitDetailsBaseXRTable(xrp, title);
             return View(xrp);
         }
         public SqlConnection ConnectToDb()
@@ -137,14 +141,22 @@ namespace ReportHelper.Controllers
             var detail = new DetailBand() { HeightF = 20 };
             var pageHeader = new PageHeaderBand() { HeightF = 20 };
             var reportFooter = new ReportFooterBand() { HeightF = 380 };
-            report.Bands.AddRange(new Band[] { detail, pageHeader, reportFooter });
+            var reportHeader = new ReportHeaderBand() { HeightF = 20 };
+            report.Bands.AddRange(new Band[] { detail, pageHeader, reportFooter, reportHeader });
         }
-        public void InitDetailsBaseXRTable(XtraReport report)
+        public void InitDetailsBaseXRTable(XtraReport report, String titleStr)
         {
             var ds = (report.DataSource as DataSet);
             int colCount = ds.Tables[0].Columns.Count;
             int colWidth = (report.PageWidth - (report.Margins.Left + report.Margins.Right)) / colCount;
-
+            // Create title
+            var title = new XRLabel();
+            title.Text = titleStr;
+            title.TextAlignment = DevExpress.XtraPrinting.TextAlignment.TopCenter;
+            title.ForeColor = Color.Black;
+            title.Font = new Font("Times New Roman", 18, FontStyle.Bold, GraphicsUnit.Pixel);
+            title.Width = 747;
+            title.Padding = new DevExpress.XtraPrinting.PaddingInfo(20, 20, 20, 20, 100.0F);
             // Create a table header.
             var tableHeader = new XRTable();
             tableHeader.Height = 20;
@@ -197,9 +209,9 @@ namespace ReportHelper.Controllers
 
             tableHeader.EndInit();
             tableBody.EndInit();
-
             // Add the table header and body to the corresponding report bands.
             report.Bands[BandKind.PageHeader].Controls.Add(tableHeader);
+            report.Bands[BandKind.ReportHeader].Controls.Add(title);
             report.Bands[BandKind.Detail].Controls.Add(tableBody);
         }
     }
