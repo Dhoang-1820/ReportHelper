@@ -125,8 +125,13 @@
                 // nối để tạo query
                 from += arrTable.join(", ")
                 query += arrField.join(", ")
-                lineSelect = query
-                document.getElementById("selectQuery").value = query + from
+                if (query + from != 'select \nfrom ')
+                {
+                    document.getElementById("selectQuery").value = query + from
+                } else {
+                    document.getElementById("selectQuery").value = ''
+                }
+                
             }).jstree({
                 "core": {
                     "themes": {
@@ -149,7 +154,7 @@
                 lines = lines.split(/\n/)
                 var rowCount = table.rows.length
                 for(var i=1; i<rowCount; i++) {
-                    var row = table.rows[i];
+                    var row = table.rows[i]
                     var fieldrow = row.cells[0].childNodes[0].value
                     var tablerow = row.cells[1].childNodes[0].value
                     var drpbox = row.cells[2].childNodes[0].value
@@ -174,6 +179,7 @@
                 lines = lines.join("\n")
                 document.getElementById("selectQuery").value = lines
                 $('.group').trigger('change')
+                $('.dropboxsort').trigger('change')
             });
             // lấy order by
             $('#myTable').on('change', '.dropboxsort' , function () {
@@ -184,14 +190,22 @@
                     var fieldRow = row.cells[0].childNodes[0].value
                     var tableRow = row.cells[1].childNodes[0].value
                     var txtbox = row.cells[3].childNodes[0].value
+                    var drpbox = row.cells[2].childNodes[0].value
                     if (txtbox != 'None') {
                         if(txtbox == 'Descending'){
                             txtbox = 'desc'
                         } else {
                             txtbox = 'asc'
                         }
-                        arrOrder.push(tableRow + "." + fieldRow + " " + txtbox)
-                    }
+                        if (drpbox != 'None'){
+                            arrOrder.push(drpbox + "(" + tableRow + "." + fieldRow + ")" + " " + txtbox)
+                        } else {
+                            arrOrder.push(tableRow + "." + fieldRow + " " + txtbox)
+                        }
+                    } 
+                }
+                if (arrOrder.length == 0){
+                    order = ''
                 }
                 order += arrOrder.join(", ")
                 var lines = document.getElementById("selectQuery").value
@@ -205,7 +219,7 @@
                 var arrWhere = [], where = "where "
                 var rowCount = table.rows.length;
                 for(var i=1; i<rowCount; i++) {
-                    var row = table.rows[i];
+                    var row = table.rows[i]
                     var fieldRow = row.cells[0].childNodes[0].value
                     var tableRow = row.cells[1].childNodes[0].value
                     var txtbox = row.cells[5].childNodes[0].value
@@ -223,7 +237,7 @@
             // lấy group by
             $('#myTable').on('change', '.group', function () {
                 var arrGroup = [], group = "group by "
-                var rowCount = table.rows.length;
+                var rowCount = table.rows.length
                 for(var i=1; i<rowCount; i++) {
                     var row = table.rows[i];
                     var fieldRow = row.cells[0].childNodes[0].value

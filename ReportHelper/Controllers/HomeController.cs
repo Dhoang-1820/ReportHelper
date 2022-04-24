@@ -73,7 +73,7 @@ namespace ReportHelper.Controllers
             SqlDataAdapter Adpt = new SqlDataAdapter(strQuery, con);
             try
             {
-                sqlcmd.ExecuteReader();
+                sqlcmd.ExecuteNonQuery();
                 return RedirectToAction("Report", new { message = strQuery, message2 = strTitle });
             }
             catch (SqlException ex)
